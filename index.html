@@ -1,0 +1,95 @@
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    
+    <title>ITD PRMGGROUP</title>
+    <link rel="icon" type="image/png" href="https://img5.pic.in.th/file/secure-sv1/5529681.jpg">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Modal เตือน In-App Browser -->
+    <div id="inAppBrowserModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full sm:max-w-sm p-6 flex flex-col text-center">
+            <div class="flex flex-col items-center mb-6">
+                <i class="fa-solid fa-globe text-blue-500 text-5xl mb-4"></i>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">เปิดในเบราว์เซอร์หลัก</h2>
+                <p class="text-gray-600 mb-6 text-sm">
+                    กรุณาเปิดลิงก์นี้บน Chrome หรือ Safari เพื่อใช้งานได้เต็มรูปแบบบนมือถือครับ
+                </p>
+            </div>
+            <div class="flex justify-center space-x-4">
+                <button id="confirmButton" class="px-6 py-2 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700">
+                    เปิดเบราว์เซอร์
+                </button>
+                <button id="copyLinkButton" class="px-6 py-2 rounded-lg text-sm font-semibold text-gray-800 bg-gray-200 hover:bg-gray-300">
+                    คัดลอกลิงก์
+                </button>
+            </div>
+            <span id="copyMessage" class="text-green-600 text-sm font-medium hidden mt-3">คัดลอกแล้ว!</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const webAppUrl = "https://script.google.com/macros/s/AKfycby0z-b3qP8WRNZDlUFYInUIuJIDQs6dkA1J5KyClP_GqwoXLcY7932xVcUGu5nkwaEI7A/exec";
+            // ตรวจ In-App Browser
+            function isInAppBrowser() {
+                const ua = navigator.userAgent || "";
+                return /FBAV|FBAN|LINE|Instagram|Twitter|Snapchat|Telegram|MicroMessenger|Pinterest|Reddit|Threads/i.test(ua);
+            }
+
+            if (isInAppBrowser()) {
+                // ถ้าเปิดจาก In-App → แสดง Modal
+                document.getElementById('inAppBrowserModal').classList.remove('hidden');
+            } else {
+                // ถ้าไม่ใช่ → เปิด Web App โดยตรง
+                window.location.href = webAppUrl;
+            }
+
+            // ปุ่ม "เปิดเบราว์เซอร์"
+            document.getElementById('confirmButton').addEventListener('click', () => {
+                const ua = navigator.userAgent.toLowerCase();
+                if (/android/i.test(ua)) {
+                    // Android → Chrome
+                    window.location.href =
+                      "intent://" + webAppUrl.replace(/^https?:\/\//, "") +
+                      "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" +
+                      encodeURIComponent(webAppUrl) + ";end";
+                } else {
+                    // iOS + Windows
+                    window.location.href = webAppUrl;
+                }
+            });
+
+            // ปุ่ม "คัดลอกลิงก์"
+            document.getElementById('copyLinkButton').addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(webAppUrl);
+                    const msg = document.getElementById('copyMessage');
+                    msg.classList.remove('hidden');
+                    setTimeout(() => msg.classList.add('hidden'), 2000);
+                } catch (err) {
+                    console.error("Copy failed:", err);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
